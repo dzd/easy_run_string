@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<UI title="test"
+    size_x="100"
+    size_y="500">
+
+    <widget name="plop" 
+            type="basic_opt"
+            opt="plop"
+            usage="Cette option sert a rien..."/>
+    <widget name="plop2"
+            type="basic_opt"
+            opt="info"
+            usage="Affiche les infos."/>
+</UI>
