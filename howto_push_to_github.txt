@@ -1,0 +1,3 @@
+cf bug ubuntu : 201786
+
+export SSH_AUTH_SOCK=0 fix this issue.
