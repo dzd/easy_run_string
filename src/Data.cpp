@@ -85,7 +85,7 @@ void Data::AddWidget(QDomElement & e)
     
     if (wd == NULL)
     {
-        cout << "soucis dns le paté" << endl;
+        cout << "Unable to get widget data association, skip those data" << endl;
         return;
     }
 
