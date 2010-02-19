@@ -79,24 +79,24 @@ void Data::AddWidget(QDomElement & e)
     QString widget_type = e.attribute("type");
     cout << "Widget type: "<< widget_type.toStdString() << endl;
 
-    WidgetData * wd;
+    WidgetData * wd = NULL;
     // Get widget type association
-    GetWidgetTypeAssociation(widget_type, wd);
-
-
-    QString field;
-
-// buggué donc hardcoded temporairement
-//    list<string> fieldlist = wd->GetFieldList();
-    list<string> fieldlist;
-    fieldlist.push_back("name");
-    fieldlist.push_back("opt");
-    fieldlist.push_back("usage");
-    fieldlist.push_back("erf");
-
+    wd = GetWidgetTypeAssociation(widget_type);
     
-    list<string>::iterator flistbegin = fieldlist.begin();
-    list<string>::iterator flistend = fieldlist.end();
+    if (wd == NULL)
+    {
+        cout << "soucis dns le paté" << endl;
+        return;
+    }
+
+    list<string> fl;
+    wd->GetFieldList(fl);
+
+    // for each field required by the widget data
+    // search in dom for value and fill the widget data
+    QString field;
+    list<string>::iterator flistbegin = fl.begin();
+    list<string>::iterator flistend = fl.end();
     list<string>::iterator flist_it = flistbegin;
     for(; flist_it!=flistend; flist_it++)
     {
@@ -105,26 +105,11 @@ void Data::AddWidget(QDomElement & e)
         if(field != "")
             wd->FillField((*flist_it),field.toStdString());
     }
-
-
-    // get list of mandatory fields requested by the widget and fill them
-
-
-    // get list of optional fields requested by the widget and fill them
-
     
-    // temp test
-/*
-    cout << e.attribute("name", "NA").toStdString() << endl;
-    cout << e.attribute("opt", "NA").toStdString() << endl;
-    cout << e.attribute("usage", "NA").toStdString() << endl;
-*/
-    // Now try to read all the param known for the type of widget
-    // param list currently hardcoded
-    // name, opt, usage
+    
+    // display all the widget data and their content
 
 
-    // then a specific method is called for this type
 }
 
 /**
@@ -132,14 +117,16 @@ void Data::AddWidget(QDomElement & e)
 * \param widget_type the widget type
 * \param w WidgetData pointer to get the empty widgetData created
 */
-void Data::GetWidgetTypeAssociation(QString & widget_type, WidgetData * w)
+WidgetData * Data::GetWidgetTypeAssociation(QString & widget_type)
 {
+    WidgetData * w = NULL; 
     // temporary hard coded
     if ( widget_type == "basic_opt")
     {
         cout << "-- A basic opt widget must be created." << endl;
         w = new BasicOptWidgetData("void");
     }
+    return w;
 }
 
 /**
@@ -154,9 +141,9 @@ WidgetData::WidgetData(string name)
 /**
 * Return a list of field required by the widgetdata
 */
-list<string> & WidgetData::GetFieldList()
+void WidgetData::GetFieldList(list<string> l)
 {
-    return fieldlist;
+    l = fieldlist;
 }
 
 /**
@@ -167,15 +154,17 @@ void WidgetData::FillField(string name, string value)
     cout << "[" << name << ":" << value <<"]"<< endl;
 }
 
-
-
 /**
-* Simple widget data 
+* Simple widget data
 */
 BasicOptWidgetData::BasicOptWidgetData(string name)
                   : WidgetData(name)
 {
     cout << "BasicOptWidgetData created." << endl;
+    fieldlist.push_back("name");
+    fieldlist.push_back("opt");
+    fieldlist.push_back("usage");
+    fieldlist.push_back("erf");
 }
 
 void BasicOptWidgetData::GetType(string & type)

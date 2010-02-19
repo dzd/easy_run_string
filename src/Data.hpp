@@ -31,7 +31,7 @@ private:
     Data();
 
     void AddWidget(QDomElement & e);
-    void GetWidgetTypeAssociation(QString & widget_type, WidgetData * w);
+    WidgetData * GetWidgetTypeAssociation(QString & widget_type);
 
 public:
     static Data * GetInstance();
@@ -51,14 +51,14 @@ protected:
 public:
     WidgetData(string name);
 
-    list<string> & GetFieldList();
+    void GetFieldList(list<string> l);
     void FillField(string name, string value);
 
     virtual void GetType(string & type) {};
 };
 
 /**
-* Basic widget one option following by input
+* Basic widget one option following by inputs
 */
 class BasicOptWidgetData : public WidgetData
 {

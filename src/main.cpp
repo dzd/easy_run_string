@@ -13,7 +13,7 @@ int main(int argc, char** argv)
     Data * d = Data::GetInstance();
     EasyView * v = EasyView::GetInstance();
 
-    if (!d->LoadDescXml(QString("/home/dzd/devel/easy_run_string/data/desc.xml")))
+    if (!d->LoadDescXml(QString("data/desc.xml")))
         cout << "Error while loading file..." << endl;
 
     return app.exec();
