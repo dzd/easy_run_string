@@ -105,8 +105,7 @@ void Data::AddWidget(QDomElement & e)
         if(field != "")
             wd->FillField((*flist_it),field.toStdString());
     }
-    
-    
+
     // display all the widget data and their content
 
 

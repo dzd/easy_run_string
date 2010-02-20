@@ -9,8 +9,8 @@ INCLUDEPATH += . src
 QT += xml
 
 # Input
-HEADERS += src/Data.hpp src/View.hpp
-SOURCES += src/Data.cpp src/main.cpp src/View.cpp
+HEADERS += src/Data.hpp src/View.hpp src/Controller.hpp
+SOURCES += src/Data.cpp src/main.cpp src/View.cpp src/Controller.cpp
 
 # Output
 OBJECTS_DIR = src
