@@ -18,9 +18,9 @@ EasyController::EasyController()
 
     if (data->LoadDescXml(QString("data/desc.xml")))
     {
-        list<WidgetData> l = data->GetWidgetDataList();
+        //list<WidgetData> l = data->GetWidgetDataList();
         // for each item in WidgetData list ask the view to append a new widget
-        view->Refresh(l);
+        view->Refresh(data->GetWidgetDataList());
     } else {
         cout << "Error while loading file..." << endl;
     }

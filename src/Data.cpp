@@ -82,7 +82,7 @@ void Data::AddWidget(QDomElement & e)
     WidgetData * wd = NULL;
     // Get widget type association
     wd = GetWidgetTypeAssociation(widget_type);
-    
+
     if (wd == NULL)
     {
         cout << "Unable to get widget data association, skip those data" << endl;
@@ -100,7 +100,6 @@ void Data::AddWidget(QDomElement & e)
 
     for(; flist_it!=flistend; flist_it++)
     {
-//         cout << "---" << (*flist_it) << endl;
         field = e.attribute(QString((*flist_it).c_str()), "");
         if(field != "")
         {
@@ -112,6 +111,15 @@ void Data::AddWidget(QDomElement & e)
 
     // eventually append the new widgetData to the WidgetData list
     widgetdata_list.push_back(*wd);
+    p_widgetdata_list.push_back(wd);
+
+/*    // Temp test
+    BasicOptWidgetData * test = dynamic_cast<BasicOptWidgetData*>((*p_widgetdata_list.begin()));
+    if (test)
+        cout << "dynamic_cast worked !" << endl;
+    else
+        cout << "dynamic_cast failed !" << endl;
+    */
 }
 
 /**
@@ -135,10 +143,18 @@ WidgetData * Data::GetWidgetTypeAssociation(QString & widget_type)
 /**
 * Return a copy of the WidgetData list (for the view)
 */
-list<WidgetData> Data::GetWidgetDataList()
+/*list<WidgetData> Data::GetWidgetDataList()
 {
     //cout << "Data::GetWidgetDataList, list size: " << widgetdata_list.size() << endl;
     return widgetdata_list;
+}*/
+
+/**
+* Return a const iterator on widget data list.
+*/
+const list<WidgetData*>& Data::GetWidgetDataList()
+{
+    return p_widgetdata_list;
 }
 
 //--------------------------------------------------------------------------------------------

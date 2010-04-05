@@ -56,7 +56,7 @@ private:
     void Populate();
     void SynchroniseToData();
 
-    void GetWidget(WidgetData* w, QWidget* qw);
+    QWidget * GetWidget(WidgetData* w);
     void AppendWidget(QWidget* qw);
 
     EasyView();
@@ -64,7 +64,7 @@ private:
 public:
     static EasyView * GetInstance();
 
-    void Refresh(list<WidgetData> & l);
+    void Refresh(const list<WidgetData*>& wd);
 
     //temp
     void TestWidgetInsertion();
@@ -77,31 +77,6 @@ private slots:
     void OnTest() {TestWidgetInsertion();}
 
 };
-
-/*---------------------------------------------------------------------*/
-/**
-* Base factory class to produce widget
-*/
-class WidgetFactory
-{
-protected:
-    EasyView * parent;
-public:
-    WidgetFactory(EasyView * p) { parent = p; }
-    virtual void GetWidget(WidgetData* w, QWidget* qw) {}
-};
-
-/**
-* Factory class to produce BasicOptWidget
-*/
-class BasicOptWidgetFactory : public WidgetFactory
-{
-public:
-    BasicOptWidgetFactory(EasyView * p);
-    virtual void GetWidget(WidgetData* w, QWidget* qw);
-};
-
-
 
 /*---------------------------------------------------------------------*/
 class BasicOptWidget : public QWidget

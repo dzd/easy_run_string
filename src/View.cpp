@@ -3,6 +3,9 @@
 // temp
 #include <iostream>
 
+#include <typeinfo>
+
+
 using namespace std;
 
 // View
@@ -32,34 +35,36 @@ EasyView::EasyView()
 * Refresh the whole list of widget displayed
 * with the WidgetData list provided as argument.
 */
-void EasyView::Refresh(list<WidgetData> & l)
+void EasyView::Refresh(const list<WidgetData*>& wd)
 {
-    cout << "EasyView::Refresh, list size: " << l.size() << endl;
-    list<WidgetData>::iterator wlistbegin = l.begin();
-    list<WidgetData>::iterator wlistend = l.end();
-    list<WidgetData>::iterator wlist_it = wlistbegin;
+    //cout << "EasyView::Refresh, list size: " << it.size() << endl;
+    list<WidgetData*>::const_iterator wd_begin = wd.begin();
+    list<WidgetData*>::const_iterator wd_end = wd.end();
+    list<WidgetData*>::const_iterator wd_it = wd_begin;
 
     QWidget * qw;
-    for(; wlist_it != wlistend; wlist_it++)
+    for(; wd_it != wd_end; wd_it++)
     {
-        cout << "Working on: " << (*wlist_it).GetField("name") << endl;
+        cout << "Working on: " << (*wd_it)->GetField("name") << endl;
         // for wd create a view widget
-        GetWidget(&(*wlist_it), qw);
+
+        qw = GetWidget((*wd_it));
         AppendWidget(qw);
     }
 
 }
 
 
-void EasyView::GetWidget(WidgetData* w, QWidget* qw)
+QWidget * EasyView::GetWidget(WidgetData* w)
 {
     BasicOptWidgetData* bowd = dynamic_cast<BasicOptWidgetData*>(w);
 
     if (bowd)
     {
-        qw = new BasicOptWidget(this, QString("opt"), QString(bowd->GetField("opt").c_str()));
+        return new BasicOptWidget(this, QString("opt"), QString(bowd->GetField("opt").c_str()));
     } else {
         cout << "Unable to cast the WidgetData..., no widget generated" << endl;
+        return NULL;
     }
 }
 
@@ -156,21 +161,6 @@ void EasyView::OnQuit()
     cout << "Exiting !"<< endl;
     qApp->quit();
 }
-
-//--------------------------------------------------------------------------------------------------------------------
-
-
-BasicOptWidgetFactory::BasicOptWidgetFactory(EasyView * p)
-                     : WidgetFactory(p)
-{
-
-}
-
-void BasicOptWidgetFactory::GetWidget(WidgetData* w, QWidget* qw)
-{
-    qw = new BasicOptWidget(parent, QString("test"), QString("vide..."));
-}
-
 
 //--------------------------------------------------------------------------------------------------------------------
 BasicOptWidget::BasicOptWidget(QWidget* parent, QString opt, QString value)

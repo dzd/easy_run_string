@@ -27,7 +27,13 @@ class WidgetData;
 class Data
 {
 private:
+//FIXME:  deprecated: to be replaced by p_widgetdata_list
     list<WidgetData> widgetdata_list;
+//
+    list<WidgetData*>::const_iterator it_p_widgetdata_list;
+
+    list<WidgetData*> p_widgetdata_list;
+
     static Data * p_instance;
     Data();
 
@@ -39,7 +45,9 @@ public:
 
     bool LoadDescXml(QString filename);
 
-    list<WidgetData> GetWidgetDataList();
+//FIXME: deprecated: to be replaced by list<WidgetData>::const_iterator GetWidgetDataList();
+    //list<WidgetData> GetWidgetDataList();
+    const list<WidgetData*>& GetWidgetDataList();
 };
 
 /**
