@@ -5,6 +5,7 @@ using namespace std;
 
 // STL includes
 #include <string>
+#include <list>
 
 
 // QT includes
@@ -18,8 +19,13 @@ using namespace std;
 #include "qapplication.h"
 #include <QLineEdit>
 
+// easy_run_string includes
+#include "Data.hpp"
+
 
 class BasicOptWidget;
+class WidgetFactory;
+class BasicOptWidgetFactory;
 
 class EasyView : public QMainWindow
 {
@@ -50,16 +56,21 @@ private:
     void Populate();
     void SynchroniseToData();
 
+    void GetWidget(WidgetData* w, QWidget* qw);
+    void AppendWidget(QWidget* qw);
+
     EasyView();
 
 public:
     static EasyView * GetInstance();
 
+    void Refresh(list<WidgetData> & l);
+
     //temp
     void TestWidgetInsertion();
 
 private slots:
-/*    bool OnSave();
+/*  bool OnSave();
     bool OnSaveAs();
     void OnClose();*/
     void OnQuit();
@@ -67,7 +78,32 @@ private slots:
 
 };
 
+/*---------------------------------------------------------------------*/
+/**
+* Base factory class to produce widget
+*/
+class WidgetFactory
+{
+protected:
+    EasyView * parent;
+public:
+    WidgetFactory(EasyView * p) { parent = p; }
+    virtual void GetWidget(WidgetData* w, QWidget* qw) {}
+};
 
+/**
+* Factory class to produce BasicOptWidget
+*/
+class BasicOptWidgetFactory : public WidgetFactory
+{
+public:
+    BasicOptWidgetFactory(EasyView * p);
+    virtual void GetWidget(WidgetData* w, QWidget* qw);
+};
+
+
+
+/*---------------------------------------------------------------------*/
 class BasicOptWidget : public QWidget
 {
     Q_OBJECT

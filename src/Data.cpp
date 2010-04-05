@@ -48,7 +48,7 @@ bool Data::LoadDescXml(QString filename)
     QDomNodeList nodelist_widget = d.elementsByTagName(QString("widget"));
     QDomNode node;
     //QDomNodeAttributesMap attr_map;
-    
+
     // And read them all
     for (unsigned int i = 0; i< nodelist_widget.length(); i++)
     {
@@ -89,8 +89,7 @@ void Data::AddWidget(QDomElement & e)
         return;
     }
 
-    list<string> fl;
-    wd->GetFieldList(fl);
+    list<string> fl = wd->GetFieldList();
 
     // for each field required by the widget data
     // search in dom for value and fill the widget data
@@ -98,17 +97,21 @@ void Data::AddWidget(QDomElement & e)
     list<string>::iterator flistbegin = fl.begin();
     list<string>::iterator flistend = fl.end();
     list<string>::iterator flist_it = flistbegin;
+
     for(; flist_it!=flistend; flist_it++)
     {
-        cout << "---" << (*flist_it) << endl;
+//         cout << "---" << (*flist_it) << endl;
         field = e.attribute(QString((*flist_it).c_str()), "");
         if(field != "")
-            wd->FillField((*flist_it),field.toStdString());
+        {
+            wd->SetField((*flist_it),field.toStdString());
+        }
     }
 
     // display all the widget data and their content
 
-
+    // eventually append the new widgetData to the WidgetData list
+    widgetdata_list.push_back(*wd);
 }
 
 /**
@@ -128,6 +131,17 @@ WidgetData * Data::GetWidgetTypeAssociation(QString & widget_type)
     return w;
 }
 
+
+/**
+* Return a copy of the WidgetData list (for the view)
+*/
+list<WidgetData> Data::GetWidgetDataList()
+{
+    //cout << "Data::GetWidgetDataList, list size: " << widgetdata_list.size() << endl;
+    return widgetdata_list;
+}
+
+//--------------------------------------------------------------------------------------------
 /**
 * Base widgetdata
 */
@@ -140,19 +154,30 @@ WidgetData::WidgetData(string name)
 /**
 * Return a list of field required by the widgetdata
 */
-void WidgetData::GetFieldList(list<string> l)
+//void WidgetData::GetFieldList(list<string> l)
+list<string> WidgetData::GetFieldList()
 {
-    l = fieldlist;
+    cout << "WidgetData::GetFieldList FieldList, size : " << fieldlist.size() << endl;
+    return fieldlist;
 }
 
 /**
-* Return a list of field required by the widgetdata
+* Set field associated value
 */
-void WidgetData::FillField(string name, string value)
+void WidgetData::SetField(string name, string value)
 {
     cout << "[" << name << ":" << value <<"]"<< endl;
+    field_value_list[name] = value;
+}
+/**
+* Access to field value
+*/
+string WidgetData::GetField(string name)
+{
+    return field_value_list[name];
 }
 
+//--------------------------------------------------------------------------------------------
 /**
 * Simple widget data
 */
@@ -164,9 +189,12 @@ BasicOptWidgetData::BasicOptWidgetData(string name)
     fieldlist.push_back("opt");
     fieldlist.push_back("usage");
     fieldlist.push_back("erf");
+
+    cout << "BasicOptWidgetData:: FieldList, size : " << fieldlist.size() << endl;
 }
 
 void BasicOptWidgetData::GetType(string & type)
 {
 
 }
+//--------------------------------------------------------------------------------------------

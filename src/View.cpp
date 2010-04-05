@@ -9,6 +9,10 @@ using namespace std;
 EasyView * EasyView::p_instance = NULL;
 
 
+/**
+* EasyView is a singleton object
+* use GetInstance to use it
+**/
 EasyView * EasyView::GetInstance()
 {
     if(! EasyView::p_instance )
@@ -16,11 +20,62 @@ EasyView * EasyView::GetInstance()
     return EasyView::p_instance;
 }
 
+/**
+* EasyView constructor.
+*/
 EasyView::EasyView()
 {
     InitWidget();
 }
 
+/**
+* Refresh the whole list of widget displayed
+* with the WidgetData list provided as argument.
+*/
+void EasyView::Refresh(list<WidgetData> & l)
+{
+    cout << "EasyView::Refresh, list size: " << l.size() << endl;
+    list<WidgetData>::iterator wlistbegin = l.begin();
+    list<WidgetData>::iterator wlistend = l.end();
+    list<WidgetData>::iterator wlist_it = wlistbegin;
+
+    QWidget * qw;
+    for(; wlist_it != wlistend; wlist_it++)
+    {
+        cout << "Working on: " << (*wlist_it).GetField("name") << endl;
+        // for wd create a view widget
+        GetWidget(&(*wlist_it), qw);
+        AppendWidget(qw);
+    }
+
+}
+
+
+void EasyView::GetWidget(WidgetData* w, QWidget* qw)
+{
+    BasicOptWidgetData* bowd = dynamic_cast<BasicOptWidgetData*>(w);
+
+    if (bowd)
+    {
+        qw = new BasicOptWidget(this, QString("opt"), QString(bowd->GetField("opt").c_str()));
+    } else {
+        cout << "Unable to cast the WidgetData..., no widget generated" << endl;
+    }
+}
+
+void EasyView::AppendWidget(QWidget* qw)
+{
+    if (qw != NULL)
+    {
+        mainLayout->addWidget(qw);
+    } else {
+        cout << "Error inserting widget"<< endl;
+    }
+}
+
+/**
+* Initilization of all the QT widgets.
+*/
 void EasyView::InitWidget()
 {
     setMinimumSize(600, 600);
@@ -81,19 +136,40 @@ void EasyView::InitWidget()
 */
 }
 
+
+/**
+* SLOT triggered by 'test' menu
+* used for testing purpose
+*/
 void EasyView::TestWidgetInsertion()
 {
     QWidget * q = new BasicOptWidget(this, QString("-plop"), QString("vide..."));
     mainLayout->addWidget(q);
 }
 
+
+/**
+* SLOT triggered by 'quit' menu
+*/
 void EasyView::OnQuit()
 {
     cout << "Exiting !"<< endl;
     qApp->quit();
 }
 
+//--------------------------------------------------------------------------------------------------------------------
 
+
+BasicOptWidgetFactory::BasicOptWidgetFactory(EasyView * p)
+                     : WidgetFactory(p)
+{
+
+}
+
+void BasicOptWidgetFactory::GetWidget(WidgetData* w, QWidget* qw)
+{
+    qw = new BasicOptWidget(parent, QString("test"), QString("vide..."));
+}
 
 
 //--------------------------------------------------------------------------------------------------------------------

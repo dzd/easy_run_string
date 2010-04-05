@@ -2,6 +2,8 @@ using namespace std;
 
 #include <iostream>
 
+#include <list>
+
 #include <QString>
 
 #include "Controller.hpp"
@@ -14,8 +16,15 @@ EasyController::EasyController()
     InitView();
     InitData();
 
-    if (!data->LoadDescXml(QString("data/desc.xml")))
+    if (data->LoadDescXml(QString("data/desc.xml")))
+    {
+        list<WidgetData> l = data->GetWidgetDataList();
+        // for each item in WidgetData list ask the view to append a new widget
+        view->Refresh(l);
+    } else {
         cout << "Error while loading file..." << endl;
+    }
+
 }
 
 /**

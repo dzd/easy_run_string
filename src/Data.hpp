@@ -9,6 +9,7 @@ using namespace std;
 // STL includes
 #include <list>
 #include <string>
+#include <map>
 
 // QT includes
 #include <QString>
@@ -37,6 +38,8 @@ public:
     static Data * GetInstance();
 
     bool LoadDescXml(QString filename);
+
+    list<WidgetData> GetWidgetDataList();
 };
 
 /**
@@ -48,11 +51,16 @@ protected:
     string name;
     list<string> fieldlist;
 
+    map<string, string> field_value_list;
+
 public:
     WidgetData(string name);
 
-    void GetFieldList(list<string> l);
-    void FillField(string name, string value);
+//  void GetFieldList(list<string> l);
+    list<string> GetFieldList();
+
+    void SetField(string name, string value);
+    string GetField(string name);
 
     virtual void GetType(string & type) {};
 };
