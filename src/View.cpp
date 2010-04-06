@@ -85,6 +85,8 @@ void EasyView::InitWidget()
 {
     setMinimumSize(600, 600);
 
+
+    //--- menu ---
     menubar = new QMenuBar(this);
 
     open = new QAction(tr("Open..."), this);
@@ -108,6 +110,7 @@ void EasyView::InitWidget()
 
     setMenuBar(menubar);
 
+    // --- central widget ---
     scrollarea = new QScrollArea(this);
     mainwidget = new QWidget(this);
     scrollarea->setWidget(mainwidget);
@@ -121,6 +124,31 @@ void EasyView::InitWidget()
     mainLayout->setSpacing(0);
     mainwidget->setLayout(mainLayout);
 
+    // --- header widget ---
+    exec_gbox = new QGroupBox(scrollarea);
+    exec_gbox->setMinimumSize(QSize(0, 60));
+    // TODO: setup a variable for this string.
+    exec_gbox->setTitle("Executable name: ");
+
+    exec_hbox = new QHBoxLayout(exec_gbox);
+    exec_label = new QLabel(exec_gbox);
+    // TODO: setup a variable for this string.
+    exec_label->setText("No executable name specified...");
+
+    exec_hbox->addWidget(exec_label);
+    
+    mainLayout->addWidget(exec_gbox);
+
+    /*QSpacerItem *verticalSpacer;
+
+    // runstring footer
+    QGroupBox   *runstring_groupbox;
+    QHBoxLayout *runstring_hbox;
+    QLineEdit   *runstring_lineEdit;
+    QToolButton *runstring_button;
+
+*/
+    
     scrollarea->show();
     mainwidget->show();
     this->show();

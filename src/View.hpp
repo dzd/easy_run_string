@@ -18,6 +18,11 @@ using namespace std;
 #include <QAction>
 #include "qapplication.h"
 #include <QLineEdit>
+#include <QLabel>
+#include <QGroupBox>
+#include <QHBoxLayout>
+#include <QLineEdit>
+#include <QToolButton>
 
 // easy_run_string includes
 #include "Data.hpp"
@@ -38,6 +43,27 @@ private:
     QWidget     * mainwidget;
     QVBoxLayout * mainLayout;
 
+
+
+    //QWidget *verticalLayoutWidget;
+
+    QVBoxLayout *verticalLayout;
+    QWidget *horizontalLayoutWidget_2;
+
+    // executable header
+    QGroupBox   * exec_gbox;
+    QHBoxLayout * exec_hbox;
+    QLabel      * exec_label;
+
+//     QSpacerItem *verticalSpacer;
+
+    // runstring footer
+    QGroupBox   *runstring_groupbox;
+    QHBoxLayout *runstring_hbox;
+    QLineEdit   *runstring_lineEdit;
+    QToolButton *runstring_button;
+
+    // menu
     QMenuBar    * menubar;
     QMenu       * file;
     QAction     * open,
