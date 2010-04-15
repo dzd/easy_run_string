@@ -83,6 +83,8 @@ protected:
             defaultvalue,
             usage;
 
+    static list<string> mandatory_fields;
+
 public:
     BasicOptWidgetData(string name);
 

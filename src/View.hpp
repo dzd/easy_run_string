@@ -23,6 +23,7 @@ using namespace std;
 #include <QHBoxLayout>
 #include <QLineEdit>
 #include <QToolButton>
+#include <QSpacerItem>
 
 // easy_run_string includes
 #include "Data.hpp"
@@ -55,13 +56,14 @@ private:
     QHBoxLayout * exec_hbox;
     QLabel      * exec_label;
 
-//     QSpacerItem *verticalSpacer;
+    // spacer
+    QSpacerItem * verticalSpacer;
 
     // runstring footer
-    QGroupBox   *runstring_groupbox;
-    QHBoxLayout *runstring_hbox;
-    QLineEdit   *runstring_lineEdit;
-    QToolButton *runstring_button;
+    QGroupBox   * runstring_groupbox;
+    QHBoxLayout * runstring_hbox;
+    QLineEdit   * runstring_lineEdit;
+    QToolButton * runstring_button;
 
     // menu
     QMenuBar    * menubar;
@@ -84,6 +86,8 @@ private:
 
     QWidget * GetWidget(WidgetData* w);
     void AppendWidget(QWidget* qw);
+
+    void RemoveSpacer();
 
     EasyView();
 

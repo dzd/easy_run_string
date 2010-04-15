@@ -78,6 +78,54 @@ void EasyView::AppendWidget(QWidget* qw)
     }
 }
 
+void EasyView::RemoveSpacer()
+{
+    QLayoutItem *child;
+    QWidget * w;
+    QSpacerItem * qs = NULL;
+    
+    int i = 0;
+    while ((child = mainLayout->takeAt(i)) != 0)
+    {
+        i++;
+        if (!(w = child->widget()))
+        return;
+
+        qs = dynamic_cast<QSpacerItem*>(w);
+
+        if (qs)
+        {
+            mainLayout->removeItem(child);
+            delete w;
+            delete child;
+        }
+    }
+
+}
+
+/**
+ * Empty the layout
+ *
+bool Empty()
+{
+        QLayoutItem *child;
+        QWidget * w;
+
+        while ((child = mainLayout->takeAt(0)) != 0)
+        {
+                if (!(w = child->widget()))
+                        return false;
+
+                mainLayout->removeItem(child);
+                delete w;
+                delete child;
+        }
+
+        return true;
+}
+*/
+
+
 /**
 * Initilization of all the QT widgets.
 */
@@ -139,7 +187,11 @@ void EasyView::InitWidget()
     
     mainLayout->addWidget(exec_gbox);
 
-    /*QSpacerItem *verticalSpacer;
+    // Empty list only one spacer
+    verticalSpacer = new QSpacerItem(20, 40, QSizePolicy::Minimum, QSizePolicy::Expanding);
+    mainLayout->addItem(verticalSpacer);
+    
+    /*
 
     // runstring footer
     QGroupBox   *runstring_groupbox;
@@ -176,8 +228,11 @@ void EasyView::InitWidget()
 */
 void EasyView::TestWidgetInsertion()
 {
+    /*
     QWidget * q = new BasicOptWidget(this, QString("-plop"), QString("vide..."));
     mainLayout->addWidget(q);
+    */
+    RemoveSpacer();
 }
 
 
