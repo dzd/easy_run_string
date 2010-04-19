@@ -60,7 +60,7 @@ private:
     QSpacerItem * verticalSpacer;
 
     // runstring footer
-    QGroupBox   * runstring_groupbox;
+    QGroupBox   * runstring_gbox;
     QHBoxLayout * runstring_hbox;
     QLineEdit   * runstring_lineEdit;
     QToolButton * runstring_button;

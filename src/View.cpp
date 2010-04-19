@@ -187,19 +187,25 @@ void EasyView::InitWidget()
     
     mainLayout->addWidget(exec_gbox);
 
-    // Empty list only one spacer
+    // initiate empty list : only one spacer
     verticalSpacer = new QSpacerItem(20, 40, QSizePolicy::Minimum, QSizePolicy::Expanding);
     mainLayout->addItem(verticalSpacer);
     
-    /*
+    runstring_gbox = new QGroupBox(scrollarea);
+    runstring_gbox->setMinimumSize(QSize(0, 60));
+    // TODO: setup a variable for this string.
+    runstring_gbox->setTitle("Runstring preview:");
+    
+    runstring_hbox = new QHBoxLayout(runstring_gbox);
+    runstring_lineEdit = new QLineEdit(runstring_gbox);
+    runstring_button = new QToolButton(runstring_gbox);
+    // TODO: pour l'internationalisation:
+    //runstring_button->setText(QApplication::translate("Dialog", "run !", 0, QApplication::UnicodeUTF8));
+    runstring_button->setText("run!");
+    runstring_hbox->addWidget(runstring_lineEdit);
+    runstring_hbox->addWidget(runstring_button);
 
-    // runstring footer
-    QGroupBox   *runstring_groupbox;
-    QHBoxLayout *runstring_hbox;
-    QLineEdit   *runstring_lineEdit;
-    QToolButton *runstring_button;
-
-*/
+    mainLayout->addWidget(runstring_gbox);
     
     scrollarea->show();
     mainwidget->show();
