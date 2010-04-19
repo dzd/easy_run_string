@@ -72,12 +72,17 @@ void EasyView::AppendWidget(QWidget* qw)
 {
     if (qw != NULL)
     {
-        mainLayout->addWidget(qw);
+        bodylayout->addWidget(qw);
     } else {
         cout << "Error inserting widget"<< endl;
     }
 }
 
+
+/**
+* Remove the spacer Item from the specified layout (todo)
+*/
+//TODO: add a layout as parameter
 void EasyView::RemoveSpacer()
 {
     QLayoutItem *child;
@@ -85,7 +90,7 @@ void EasyView::RemoveSpacer()
     QSpacerItem * qs = NULL;
     
     int i = 0;
-    while ((child = mainLayout->takeAt(i)) != 0)
+    while ((child = bodylayout->takeAt(i)) != 0)
     {
         i++;
         if (!(w = child->widget()))
@@ -95,43 +100,29 @@ void EasyView::RemoveSpacer()
 
         if (qs)
         {
-            mainLayout->removeItem(child);
+            bodylayout->removeItem(child);
             delete w;
             delete child;
         }
     }
-
 }
 
 /**
- * Empty the layout
- *
-bool Empty()
-{
-        QLayoutItem *child;
-        QWidget * w;
-
-        while ((child = mainLayout->takeAt(0)) != 0)
-        {
-                if (!(w = child->widget()))
-                        return false;
-
-                mainLayout->removeItem(child);
-                delete w;
-                delete child;
-        }
-
-        return true;
-}
+* Compute runstring with the current value displayed in each widget
 */
-
+void EasyView::ComputeRunstring()
+{
+// for each widget call a method (from data ?? ) which return the string associated to the opt
+    string temp = "trololololol";
+    SetRunstring(temp);
+}
 
 /**
 * Initilization of all the QT widgets.
 */
 void EasyView::InitWidget()
 {
-    setMinimumSize(600, 600);
+    setMinimumSize(400,600);
 
 
     //--- menu ---
@@ -161,41 +152,49 @@ void EasyView::InitWidget()
     // --- central widget ---
     scrollarea = new QScrollArea(this);
     mainwidget = new QWidget(this);
-    scrollarea->setWidget(mainwidget);
 
+    bodywidget = new QWidget(this);
+    scrollarea->setWidget(bodywidget);
     scrollarea->setWidgetResizable(true);
 
-    setCentralWidget(scrollarea);
+    setCentralWidget(mainwidget);
 
-    mainLayout = new QVBoxLayout(this);
-    mainLayout->setMargin(0);
-    mainLayout->setSpacing(0);
-    mainwidget->setLayout(mainLayout);
+    // layout for the main widget
+    mainlayout = new QVBoxLayout(this);
+    mainlayout->setMargin(0);
+    mainlayout->setSpacing(0);
+    mainwidget->setLayout(mainlayout);
 
-    // --- header widget ---
+    // layout for the body widget
+    bodylayout = new QVBoxLayout(this);
+    bodylayout->setMargin(0);
+    bodylayout->setSpacing(0);
+    bodywidget->setLayout(bodylayout);
+    
+
+    // header widget 
     exec_gbox = new QGroupBox(scrollarea);
     exec_gbox->setMinimumSize(QSize(0, 60));
     // TODO: setup a variable for this string.
     exec_gbox->setTitle("Executable name: ");
-
     exec_hbox = new QHBoxLayout(exec_gbox);
     exec_label = new QLabel(exec_gbox);
     // TODO: setup a variable for this string.
     exec_label->setText("No executable name specified...");
-
     exec_hbox->addWidget(exec_label);
-    
-    mainLayout->addWidget(exec_gbox);
+    mainlayout->addWidget(exec_gbox);
 
     // initiate empty list : only one spacer
-    verticalSpacer = new QSpacerItem(20, 40, QSizePolicy::Minimum, QSizePolicy::Expanding);
-    mainLayout->addItem(verticalSpacer);
+    /*verticalSpacer = new QSpacerItem(20, 40, QSizePolicy::Minimum, QSizePolicy::Expanding);
+    mainlayout->addItem(verticalSpacer);*/
+    mainlayout->addWidget(scrollarea);
     
+
+    // footer widget
     runstring_gbox = new QGroupBox(scrollarea);
     runstring_gbox->setMinimumSize(QSize(0, 60));
     // TODO: setup a variable for this string.
     runstring_gbox->setTitle("Runstring preview:");
-    
     runstring_hbox = new QHBoxLayout(runstring_gbox);
     runstring_lineEdit = new QLineEdit(runstring_gbox);
     runstring_button = new QToolButton(runstring_gbox);
@@ -204,10 +203,10 @@ void EasyView::InitWidget()
     runstring_button->setText("run!");
     runstring_hbox->addWidget(runstring_lineEdit);
     runstring_hbox->addWidget(runstring_button);
-
-    mainLayout->addWidget(runstring_gbox);
+    mainlayout->addWidget(runstring_gbox);
     
     scrollarea->show();
+    bodywidget->show();
     mainwidget->show();
     this->show();
 
@@ -236,9 +235,11 @@ void EasyView::TestWidgetInsertion()
 {
     /*
     QWidget * q = new BasicOptWidget(this, QString("-plop"), QString("vide..."));
-    mainLayout->addWidget(q);
+    mainlayout->addWidget(q);
     */
-    RemoveSpacer();
+    //RemoveSpacer();
+    ComputeRunstring();
+    SetExecName("plop");
 }
 
 

@@ -133,7 +133,7 @@ WidgetData * Data::GetWidgetTypeAssociation(QString & widget_type)
     // temporary hard coded
     if ( widget_type == "basic_opt")
     {
-        cout << "-- A basic opt widget must be created." << endl;
+        //cout << "-- A basic opt widget must be created." << endl;
         w = new BasicOptWidgetData("void");
     }
     return w;
@@ -164,7 +164,7 @@ const list<WidgetData*>& Data::GetWidgetDataList()
 WidgetData::WidgetData(string name)
 {
     this->name = name;
-    cout << "WidgetData created ["<<name<<"]." << endl;
+    //cout << "WidgetData created ["<<name<<"]." << endl;
 }
 
 /**
@@ -173,7 +173,7 @@ WidgetData::WidgetData(string name)
 //void WidgetData::GetFieldList(list<string> l)
 list<string> WidgetData::GetFieldList()
 {
-    cout << "WidgetData::GetFieldList FieldList, size : " << fieldlist.size() << endl;
+    //cout << "WidgetData::GetFieldList FieldList, size : " << fieldlist.size() << endl;
     return fieldlist;
 }
 
@@ -200,7 +200,7 @@ string WidgetData::GetField(string name)
 BasicOptWidgetData::BasicOptWidgetData(string name)
                   : WidgetData(name)
 {
-    cout << "BasicOptWidgetData created." << endl;
+    //cout << "BasicOptWidgetData created." << endl;
     fieldlist.push_back("name");
     fieldlist.push_back("opt");
     fieldlist.push_back("usage");

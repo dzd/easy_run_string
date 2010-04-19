@@ -41,8 +41,10 @@ private:
     static EasyView * p_instance;
 
     QScrollArea * scrollarea;
-    QWidget     * mainwidget;
-    QVBoxLayout * mainLayout;
+    QWidget     * mainwidget,
+                * bodywidget;
+    QVBoxLayout * mainlayout,
+                * bodylayout;
 
 
 
@@ -88,6 +90,11 @@ private:
     void AppendWidget(QWidget* qw);
 
     void RemoveSpacer();
+
+    void ComputeRunstring();
+
+    void SetRunstring(string s) { runstring_lineEdit->setText(QString(s.c_str()));}
+    void SetExecName(string s) { exec_label->setText(QString(s.c_str()));}
 
     EasyView();
 
