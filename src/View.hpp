@@ -75,8 +75,8 @@ private:
                 * saveas,
                 * test,
                 * addfields,
-                * quit;
-
+                * quit,
+                * run;
 
     // Presentation
     void InitWidget();
@@ -93,15 +93,16 @@ private:
 
     void ComputeRunstring();
 
-    void SetRunstring(string s) { runstring_lineEdit->setText(QString(s.c_str()));}
-    void SetExecName(string s) { exec_label->setText(QString(s.c_str()));}
-
     EasyView();
 
 public:
     static EasyView * GetInstance();
 
     void Refresh(const list<WidgetData*>& wd);
+    void SetRunstring(string s) { runstring_lineEdit->setText(QString(s.c_str()));}
+    void SetExecName(string s) { exec_label->setText(QString(s.c_str()));}
+
+    string GetDisplayedExecName() { return exec_label->text().toStdString(); }
 
     //temp
     void TestWidgetInsertion();
@@ -111,12 +112,22 @@ private slots:
     bool OnSaveAs();
     void OnClose();*/
     void OnQuit();
-    void OnTest() {TestWidgetInsertion();}
+    void OnTest();
+    void OnRun();
 
 };
 
+class EasyViewWidget : public QWidget
+{
+public:
+    EasyViewWidget(QWidget* q);
+    virtual ~EasyViewWidget() {}
+
+    virtual string toStr() { return "plop"; }
+};
+
 /*---------------------------------------------------------------------*/
-class BasicOptWidget : public QWidget
+class BasicOptWidget : public EasyViewWidget
 {
     Q_OBJECT
 private:
@@ -128,6 +139,8 @@ private:
 
 public:
     BasicOptWidget(QWidget* parent, QString opt, QString value);
+
+    virtual string toStr();
 
 //     QString getTitle() { return groupbox->title(); }
 //     QString getText() { return textedit->toPlainText(); }

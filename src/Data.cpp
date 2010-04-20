@@ -81,7 +81,7 @@ void Data::AddWidget(QDomElement & e)
 
     WidgetData * wd = NULL;
     // Get widget type association
-    wd = GetWidgetTypeAssociation(widget_type);
+    wd = GetWidgetTypeAssociation(widget_type.toStdString());
 
     if (wd == NULL)
     {
@@ -106,20 +106,10 @@ void Data::AddWidget(QDomElement & e)
             wd->SetField((*flist_it),field.toStdString());
         }
     }
-
     // display all the widget data and their content
 
     // eventually append the new widgetData to the WidgetData list
-    widgetdata_list.push_back(*wd);
     p_widgetdata_list.push_back(wd);
-
-/*    // Temp test
-    BasicOptWidgetData * test = dynamic_cast<BasicOptWidgetData*>((*p_widgetdata_list.begin()));
-    if (test)
-        cout << "dynamic_cast worked !" << endl;
-    else
-        cout << "dynamic_cast failed !" << endl;
-    */
 }
 
 /**
@@ -127,7 +117,7 @@ void Data::AddWidget(QDomElement & e)
 * \param widget_type the widget type
 * \param w WidgetData pointer to get the empty widgetData created
 */
-WidgetData * Data::GetWidgetTypeAssociation(QString & widget_type)
+WidgetData * Data::GetWidgetTypeAssociation(string widget_type)
 {
     WidgetData * w = NULL; 
     // temporary hard coded
@@ -206,7 +196,7 @@ BasicOptWidgetData::BasicOptWidgetData(string name)
     fieldlist.push_back("usage");
     fieldlist.push_back("erf");
 
-    cout << "BasicOptWidgetData:: FieldList, size : " << fieldlist.size() << endl;
+    //cout << "BasicOptWidgetData:: FieldList, size : " << fieldlist.size() << endl;
 }
 
 void BasicOptWidgetData::GetType(string & type)

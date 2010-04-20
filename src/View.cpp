@@ -89,10 +89,8 @@ void EasyView::RemoveSpacer()
     QWidget * w;
     QSpacerItem * qs = NULL;
     
-    int i = 0;
-    while ((child = bodylayout->takeAt(i)) != 0)
+    for(int i = 0; (child = bodylayout->itemAt(i)) != 0; i++)
     {
-        i++;
         if (!(w = child->widget()))
         return;
 
@@ -113,8 +111,26 @@ void EasyView::RemoveSpacer()
 void EasyView::ComputeRunstring()
 {
 // for each widget call a method (from data ?? ) which return the string associated to the opt
-    string temp = "trololololol";
-    SetRunstring(temp);
+    QLayoutItem *child;
+    QWidget * w;
+    EasyViewWidget * evw;
+    string runstring = GetDisplayedExecName()+" ";
+
+    for(int i = 0; (child = bodylayout->itemAt(i)) != 0; i++)
+    {
+        if (!(w = child->widget()))
+        return;
+
+        evw = dynamic_cast<EasyViewWidget*>(w);
+
+        if (evw)
+        {
+            runstring += evw->toStr();
+            runstring += " ";
+        }
+    }
+
+    SetRunstring(runstring);
 }
 
 /**
@@ -160,13 +176,13 @@ void EasyView::InitWidget()
     setCentralWidget(mainwidget);
 
     // layout for the main widget
-    mainlayout = new QVBoxLayout(this);
+    mainlayout = new QVBoxLayout();
     mainlayout->setMargin(0);
     mainlayout->setSpacing(0);
     mainwidget->setLayout(mainlayout);
 
     // layout for the body widget
-    bodylayout = new QVBoxLayout(this);
+    bodylayout = new QVBoxLayout();
     bodylayout->setMargin(0);
     bodylayout->setSpacing(0);
     bodywidget->setLayout(bodylayout);
@@ -198,6 +214,8 @@ void EasyView::InitWidget()
     runstring_hbox = new QHBoxLayout(runstring_gbox);
     runstring_lineEdit = new QLineEdit(runstring_gbox);
     runstring_button = new QToolButton(runstring_gbox);
+    //run = new QAction(tr("run"), this);
+    //runstring_button->addAction(run);
     // TODO: pour l'internationalisation:
     //runstring_button->setText(QApplication::translate("Dialog", "run !", 0, QApplication::UnicodeUTF8));
     runstring_button->setText("run!");
@@ -213,6 +231,7 @@ void EasyView::InitWidget()
     //connection time
     connect(quit, SIGNAL(triggered()), this, SLOT(OnQuit()));
     connect(test, SIGNAL(triggered()), this, SLOT(OnTest()));
+    connect(runstring_button, SIGNAL(clicked()), this, SLOT(OnRun()));
     
 /*
     connect(open, SIGNAL(triggered()), this, SLOT(OnOpen()));
@@ -238,8 +257,6 @@ void EasyView::TestWidgetInsertion()
     mainlayout->addWidget(q);
     */
     //RemoveSpacer();
-    ComputeRunstring();
-    SetExecName("plop");
 }
 
 
@@ -252,9 +269,33 @@ void EasyView::OnQuit()
     qApp->quit();
 }
 
+/**
+* SLOT triggered by 'test' menu
+*/
+void EasyView::OnTest()
+{
+    SetExecName("plop");
+    //RemoveSpacer();
+}
+
+/**
+* SLOT triggered by the 'run' button
+*/
+void EasyView::OnRun()
+{
+    ComputeRunstring();
+}
+
+
+//--------------------------------------------------------------------------------------------------------------------
+EasyViewWidget::EasyViewWidget(QWidget * parent)
+              : QWidget(parent)
+{
+}
+
 //--------------------------------------------------------------------------------------------------------------------
 BasicOptWidget::BasicOptWidget(QWidget* parent, QString opt, QString value)
-              : QWidget(parent)
+              : EasyViewWidget(parent)
 {
     InitWidget(opt, value);
 }
@@ -278,4 +319,12 @@ void BasicOptWidget::InitWidget(QString opt, QString value)
     mainlayout->addWidget(value_text);
 
     this->setLayout(mainlayout);
+}
+
+/**
+* Output into a str the command line equivalent to the widget
+*/
+string BasicOptWidget::toStr()
+{
+    return "-"+opt_text->text().toStdString()+" "+value_text->text().toStdString();
 }

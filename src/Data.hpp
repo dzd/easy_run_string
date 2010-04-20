@@ -27,9 +27,6 @@ class WidgetData;
 class Data
 {
 private:
-//FIXME:  deprecated: to be replaced by p_widgetdata_list
-    list<WidgetData> widgetdata_list;
-//
     list<WidgetData*>::const_iterator it_p_widgetdata_list;
 
     list<WidgetData*> p_widgetdata_list;
@@ -38,15 +35,13 @@ private:
     Data();
 
     void AddWidget(QDomElement & e);
-    WidgetData * GetWidgetTypeAssociation(QString & widget_type);
+    WidgetData * GetWidgetTypeAssociation(string widget_type);
 
 public:
     static Data * GetInstance();
 
     bool LoadDescXml(QString filename);
 
-//FIXME: deprecated: to be replaced by list<WidgetData>::const_iterator GetWidgetDataList();
-    //list<WidgetData> GetWidgetDataList();
     const list<WidgetData*>& GetWidgetDataList();
 };
 
@@ -64,7 +59,6 @@ protected:
 public:
     WidgetData(string name);
 
-//  void GetFieldList(list<string> l);
     list<string> GetFieldList();
 
     void SetField(string name, string value);

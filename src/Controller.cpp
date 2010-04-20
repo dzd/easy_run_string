@@ -21,6 +21,7 @@ EasyController::EasyController()
         //list<WidgetData> l = data->GetWidgetDataList();
         // for each item in WidgetData list ask the view to append a new widget
         view->Refresh(data->GetWidgetDataList());
+        view->SetExecName("plopplop");
     } else {
         cout << "Error while loading file..." << endl;
     }
