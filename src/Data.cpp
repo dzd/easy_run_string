@@ -22,7 +22,9 @@ Data * Data::GetInstance()
 */
 Data::Data()
 {
-    cout << "Data constructed" << endl;
+    execname = "No_exec_name";
+    size_x = 400;
+    size_y = 600;
 }
 
 /**
@@ -41,8 +43,11 @@ bool Data::LoadDescXml(QString filename)
     }
     file.close();
 
-    QDomElement docElem = d.documentElement();
-    cout << "Root : " << docElem.tagName().toStdString() << endl;
+    QDomElement rootElem = d.documentElement();
+    cout << "Root : " << rootElem.tagName().toStdString() << endl;
+
+    if (!rootElem.hasAttributes())
+        return false;
 
     // Get the list of widgets
     QDomNodeList nodelist_widget = d.elementsByTagName(QString("widget"));
@@ -71,6 +76,7 @@ bool Data::LoadDescXml(QString filename)
 
 /**
 * Add widget to widgetData list
+* if a widget type association is found
 * \param e a QDomElement containing widget description
 */
 void Data::AddWidget(QDomElement & e)

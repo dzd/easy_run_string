@@ -32,108 +32,6 @@ EasyView::EasyView()
 }
 
 /**
-* Refresh the whole list of widget displayed
-* with the WidgetData list provided as argument.
-*/
-void EasyView::Refresh(const list<WidgetData*>& wd)
-{
-    //cout << "EasyView::Refresh, list size: " << it.size() << endl;
-    list<WidgetData*>::const_iterator wd_begin = wd.begin();
-    list<WidgetData*>::const_iterator wd_end = wd.end();
-    list<WidgetData*>::const_iterator wd_it = wd_begin;
-
-    QWidget * qw;
-    for(; wd_it != wd_end; wd_it++)
-    {
-        cout << "Working on: " << (*wd_it)->GetField("name") << endl;
-        // for wd create a view widget
-
-        qw = GetWidget((*wd_it));
-        AppendWidget(qw);
-    }
-
-}
-
-
-QWidget * EasyView::GetWidget(WidgetData* w)
-{
-    BasicOptWidgetData* bowd = dynamic_cast<BasicOptWidgetData*>(w);
-
-    if (bowd)
-    {
-        return new BasicOptWidget(this, QString("opt"), QString(bowd->GetField("opt").c_str()));
-    } else {
-        cout << "Unable to cast the WidgetData..., no widget generated" << endl;
-        return NULL;
-    }
-}
-
-void EasyView::AppendWidget(QWidget* qw)
-{
-    if (qw != NULL)
-    {
-        bodylayout->addWidget(qw);
-    } else {
-        cout << "Error inserting widget"<< endl;
-    }
-}
-
-
-/**
-* Remove the spacer Item from the specified layout (todo)
-*/
-//TODO: add a layout as parameter
-void EasyView::RemoveSpacer()
-{
-    QLayoutItem *child;
-    QWidget * w;
-    QSpacerItem * qs = NULL;
-    
-    for(int i = 0; (child = bodylayout->itemAt(i)) != 0; i++)
-    {
-        if (!(w = child->widget()))
-        return;
-
-        qs = dynamic_cast<QSpacerItem*>(w);
-
-        if (qs)
-        {
-            bodylayout->removeItem(child);
-            delete w;
-            delete child;
-        }
-    }
-}
-
-/**
-* Compute runstring with the current value displayed in each widget
-*/
-void EasyView::ComputeRunstring()
-{
-// for each widget call a method (from data ?? ) which return the string associated to the opt
-    QLayoutItem *child;
-    QWidget * w;
-    EasyViewWidget * evw;
-    string runstring = GetDisplayedExecName()+" ";
-
-    for(int i = 0; (child = bodylayout->itemAt(i)) != 0; i++)
-    {
-        if (!(w = child->widget()))
-        return;
-
-        evw = dynamic_cast<EasyViewWidget*>(w);
-
-        if (evw)
-        {
-            runstring += evw->toStr();
-            runstring += " ";
-        }
-    }
-
-    SetRunstring(runstring);
-}
-
-/**
 * Initilization of all the QT widgets.
 */
 void EasyView::InitWidget()
@@ -182,13 +80,14 @@ void EasyView::InitWidget()
     mainwidget->setLayout(mainlayout);
 
     // layout for the body widget
+    verticalSpacer = new QSpacerItem(20, 40, QSizePolicy::Minimum, QSizePolicy::Expanding);
     bodylayout = new QVBoxLayout();
     bodylayout->setMargin(0);
     bodylayout->setSpacing(0);
     bodywidget->setLayout(bodylayout);
-    
+    bodylayout->addItem(verticalSpacer);
 
-    // header widget 
+    // header widget
     exec_gbox = new QGroupBox(scrollarea);
     exec_gbox->setMinimumSize(QSize(0, 60));
     // TODO: setup a variable for this string.
@@ -201,10 +100,8 @@ void EasyView::InitWidget()
     mainlayout->addWidget(exec_gbox);
 
     // initiate empty list : only one spacer
-    /*verticalSpacer = new QSpacerItem(20, 40, QSizePolicy::Minimum, QSizePolicy::Expanding);
-    mainlayout->addItem(verticalSpacer);*/
     mainlayout->addWidget(scrollarea);
-    
+
 
     // footer widget
     runstring_gbox = new QGroupBox(scrollarea);
@@ -222,7 +119,7 @@ void EasyView::InitWidget()
     runstring_hbox->addWidget(runstring_lineEdit);
     runstring_hbox->addWidget(runstring_button);
     mainlayout->addWidget(runstring_gbox);
-    
+
     scrollarea->show();
     bodywidget->show();
     mainwidget->show();
@@ -232,7 +129,7 @@ void EasyView::InitWidget()
     connect(quit, SIGNAL(triggered()), this, SLOT(OnQuit()));
     connect(test, SIGNAL(triggered()), this, SLOT(OnTest()));
     connect(runstring_button, SIGNAL(clicked()), this, SLOT(OnRun()));
-    
+
 /*
     connect(open, SIGNAL(triggered()), this, SLOT(OnOpen()));
     connect(save, SIGNAL(triggered()), this, SLOT(OnSave()));
@@ -246,6 +143,129 @@ void EasyView::InitWidget()
 }
 
 
+
+/**
+* Refresh the whole list of widget displayed
+* with the WidgetData list provided as argument.
+*/
+void EasyView::Refresh(const list<WidgetData*>& wd)
+{
+    //cout << "EasyView::Refresh, list size: " << it.size() << endl;
+    list<WidgetData*>::const_iterator wd_begin = wd.begin();
+    list<WidgetData*>::const_iterator wd_end = wd.end();
+    list<WidgetData*>::const_iterator wd_it = wd_begin;
+
+    QWidget * qw;
+    // for each widget data in the list
+    for(; wd_it != wd_end; wd_it++)
+    {
+        // for each field required by the EasyWidget
+        cout << "Working on: " << (*wd_it)->GetField("name") << endl;
+
+        // for wd create a view widget
+        qw = GetWidget((*wd_it));
+        AppendWidget(qw);
+    }
+    MoveSpacerToBottom();
+
+}
+
+
+QWidget * EasyView::GetWidget(WidgetData* w)
+{
+    BasicOptWidgetData* bowd = dynamic_cast<BasicOptWidgetData*>(w);
+
+    if (bowd)
+    {
+        return new BasicOptWidget(this, QString("opt"), QString(bowd->GetField("opt").c_str()));
+    } else {
+        cout << "Unable to cast the WidgetData..., no widget generated" << endl;
+        return NULL;
+    }
+}
+
+void EasyView::AppendWidget(QWidget* qw)
+{
+    if (qw != NULL)
+    {
+        bodylayout->addWidget(qw);
+    } else {
+        cout << "Error inserting widget"<< endl;
+    }
+}
+
+
+/**
+* Remove the spacer Item from the specified layout (todo)
+*/
+//TODO: add a layout as parameter
+void EasyView::RemoveSpacer()
+{
+    QLayoutItem *child;
+    QSpacerItem * qs = NULL;
+    
+    for(int i = 0; (child = bodylayout->itemAt(i)) != 0; i++)
+    {
+
+        qs = dynamic_cast<QSpacerItem*>(child);
+
+        if (qs)
+        {
+            bodylayout->removeItem(child);
+            delete child;
+        }
+    }
+}
+
+/**
+* Move the spacer to the bottom of the list
+*/
+void EasyView::MoveSpacerToBottom()
+{
+    QLayoutItem *child;
+    QSpacerItem * qs = NULL;
+
+    for(int i = 0; (child = bodylayout->itemAt(i)) != 0; i++)
+    {
+        qs = dynamic_cast<QSpacerItem*>(child);
+
+        if (qs)
+        {
+            //cout << "Spacer found at: " << i << endl;
+            child = bodylayout->takeAt(i);
+            bodylayout->addItem(child);
+            return;
+        }
+    }
+}
+
+
+/**
+* Compute runstring with the current value displayed in each widget
+*/
+void EasyView::ComputeRunstring()
+{
+    QLayoutItem *child;
+    QWidget * w;
+    EasyViewWidget * evw;
+    string runstring = GetDisplayedExecName()+" ";
+
+    for(int i = 0; (child = bodylayout->itemAt(i)) != 0; i++)
+    {
+        if ((w = child->widget()))
+        {
+            evw = dynamic_cast<EasyViewWidget*>(w);
+
+            if (evw)
+            {
+                runstring += evw->toStr();
+                runstring += " ";
+            }
+        }
+    }
+    SetRunstring(runstring);
+}
+
 /**
 * SLOT triggered by 'test' menu
 * used for testing purpose
@@ -256,7 +276,8 @@ void EasyView::TestWidgetInsertion()
     QWidget * q = new BasicOptWidget(this, QString("-plop"), QString("vide..."));
     mainlayout->addWidget(q);
     */
-    //RemoveSpacer();
+    RemoveSpacer();
+    //MoveSpacerToBottom();
 }
 
 
@@ -291,6 +312,37 @@ void EasyView::OnRun()
 EasyViewWidget::EasyViewWidget(QWidget * parent)
               : QWidget(parent)
 {
+    InitWidget();
+}
+
+void EasyViewWidget::InitWidget()
+{
+    mainlayout = new QHBoxLayout(this);
+    this->setLayout(mainlayout);
+    maincheckbox = new QCheckBox(this);
+    mainlayout->addWidget(maincheckbox);
+    hspacer = new QSpacerItem(20, 40, QSizePolicy::Minimum, QSizePolicy::Expanding);
+    mainlayout->addItem(hspacer);
+}
+
+
+void EasyViewWidget::MoveSpacerRight()
+{
+    QLayoutItem * child;
+    QSpacerItem * qs = NULL;
+
+    for(int i = 0; (child = mainlayout->itemAt(i)) != 0; i++)
+    {
+        qs = dynamic_cast<QSpacerItem*>(child);
+
+        if (qs)
+        {
+            //cout << "Spacer found at: " << i << endl;
+            child = mainlayout->takeAt(i);
+            mainlayout->addItem(child);
+            return;
+        }
+    }
 }
 
 //--------------------------------------------------------------------------------------------------------------------
@@ -301,24 +353,26 @@ BasicOptWidget::BasicOptWidget(QWidget* parent, QString opt, QString value)
 }
 
 
+/**
+* Init BasicOptWidget
+*/
 void BasicOptWidget::InitWidget(QString opt, QString value)
 {
 //     groupbox = new QGroupBox(this);
 //     groupbox->setTitle(title);
 
-    opt_text = new QLineEdit(this);
-    opt_text->setReadOnly(true);
-    opt_text->insert(opt);
+    opt_label = new QLabel(this);
+    opt_label->setText(opt);
 
     value_text = new QLineEdit(this);
     value_text->insert(value);
 
-    mainlayout = new QHBoxLayout(this);
-
-    mainlayout->addWidget(opt_text);
+    mainlayout->addWidget(opt_label);
     mainlayout->addWidget(value_text);
 
-    this->setLayout(mainlayout);
+
+    connect(maincheckbox, SIGNAL(stateChanged(int)), this, SLOT(OnCheck(int)));
+
 }
 
 /**
@@ -326,5 +380,37 @@ void BasicOptWidget::InitWidget(QString opt, QString value)
 */
 string BasicOptWidget::toStr()
 {
-    return "-"+opt_text->text().toStdString()+" "+value_text->text().toStdString();
+    return "-"+opt_label->text().toStdString()+" "+value_text->text().toStdString();
+}
+
+/**
+* Public slot triggered when checkbox is checked
+*/
+void BasicOptWidget::OnCheck(int state)
+{
+    if ( state )
+    {
+        Unfold();
+    }
+    else
+    {
+        Fold();
+    }
+}
+
+
+/**
+* Inherited method used to switch the widget to his folded version
+*/
+void BasicOptWidget::Fold()
+{
+    value_text->show();
+}
+
+/**
+* Inherited method used to switch the widget to his unfolded version
+*/
+void BasicOptWidget::Unfold()
+{
+    value_text->hide();
 }

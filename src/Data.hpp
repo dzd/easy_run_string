@@ -27,7 +27,10 @@ class WidgetData;
 class Data
 {
 private:
-    list<WidgetData*>::const_iterator it_p_widgetdata_list;
+    // UI/data main properties
+    string  execname;
+    int     size_x,
+            size_y;
 
     list<WidgetData*> p_widgetdata_list;
 
@@ -39,6 +42,10 @@ private:
 
 public:
     static Data * GetInstance();
+
+    string GetExecname() {return execname;}
+    int GetSize_x() {return size_x;}
+    int GetSize_y() {return size_y;}
 
     bool LoadDescXml(QString filename);
 

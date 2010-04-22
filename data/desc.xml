@@ -6,7 +6,7 @@
 
     <widget name="plop" 
             type="basic_opt"
-            opt="plop"
+            opt="--name"
             usage="Cette option sert a rien..."/>
     <widget name="plop2"
             type="basic_opt"

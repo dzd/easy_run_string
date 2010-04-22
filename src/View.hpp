@@ -24,6 +24,7 @@ using namespace std;
 #include <QLineEdit>
 #include <QToolButton>
 #include <QSpacerItem>
+#include <QCheckBox>
 
 // easy_run_string includes
 #include "Data.hpp"
@@ -90,6 +91,7 @@ private:
     void AppendWidget(QWidget* qw);
 
     void RemoveSpacer();
+    void MoveSpacerToBottom();
 
     void ComputeRunstring();
 
@@ -119,11 +121,28 @@ private slots:
 
 class EasyViewWidget : public QWidget
 {
+    Q_OBJECT
+private:
+    QSpacerItem * hspacer;
+
+    void InitWidget();
+
+protected:
+    QHBoxLayout   * mainlayout;
+    QCheckBox     * maincheckbox;
+
+    void MoveSpacerRight();
+    void Fold() {}
+    void Unfold() {}
+
 public:
     EasyViewWidget(QWidget* q);
     virtual ~EasyViewWidget() {}
 
-    virtual string toStr() { return "plop"; }
+    virtual string toStr() = 0;
+
+public slots:
+    virtual void OnCheck(int state) {}
 };
 
 /*---------------------------------------------------------------------*/
@@ -131,16 +150,22 @@ class BasicOptWidget : public EasyViewWidget
 {
     Q_OBJECT
 private:
-    QLineEdit   * opt_text,
-                * value_text;
-    QHBoxLayout * mainlayout;
+    QLabel      * opt_label;
+    QLineEdit   * value_text;
 
     void InitWidget(QString optname, QString description);
+
+protected:
+    void Fold();
+    void Unfold();
 
 public:
     BasicOptWidget(QWidget* parent, QString opt, QString value);
 
     virtual string toStr();
+
+public slots:
+    virtual void OnCheck(int state);
 
 //     QString getTitle() { return groupbox->title(); }
 //     QString getText() { return textedit->toPlainText(); }
