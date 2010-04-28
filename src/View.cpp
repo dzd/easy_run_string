@@ -258,8 +258,11 @@ void EasyView::ComputeRunstring()
 
             if (evw)
             {
-                runstring += evw->toStr();
-                runstring += " ";
+                if ( evw->GetFoldState())
+                {
+                    runstring += evw->toStr();
+                    runstring += " ";
+                }
             }
         }
     }
@@ -309,18 +312,26 @@ void EasyView::OnRun()
 
 
 //--------------------------------------------------------------------------------------------------------------------
-EasyViewWidget::EasyViewWidget(QWidget * parent)
+EasyViewWidget::EasyViewWidget(QWidget * parent, QString opt,  bool b )
               : QWidget(parent)
 {
-    InitWidget();
+    SetFoldState( b );
+    InitWidget(opt);
 }
 
-void EasyViewWidget::InitWidget()
+void EasyViewWidget::InitWidget(QString opt)
 {
     mainlayout = new QHBoxLayout(this);
     this->setLayout(mainlayout);
+
     maincheckbox = new QCheckBox(this);
+    maincheckbox->setChecked(this->isFolded);
     mainlayout->addWidget(maincheckbox);
+
+    opt_label = new QLabel(this);
+    opt_label->setText(opt);
+    mainlayout->addWidget(opt_label);
+
     hspacer = new QSpacerItem(20, 40, QSizePolicy::Minimum, QSizePolicy::Expanding);
     mainlayout->addItem(hspacer);
 }
@@ -347,27 +358,21 @@ void EasyViewWidget::MoveSpacerRight()
 
 //--------------------------------------------------------------------------------------------------------------------
 BasicOptWidget::BasicOptWidget(QWidget* parent, QString opt, QString value)
-              : EasyViewWidget(parent)
+              : EasyViewWidget(parent, opt)
 {
-    InitWidget(opt, value);
+    InitWidget(value);
+    Fold();
 }
 
 
 /**
 * Init BasicOptWidget
 */
-void BasicOptWidget::InitWidget(QString opt, QString value)
+void BasicOptWidget::InitWidget(QString value)
 {
-//     groupbox = new QGroupBox(this);
-//     groupbox->setTitle(title);
-
-    opt_label = new QLabel(this);
-    opt_label->setText(opt);
-
     value_text = new QLineEdit(this);
     value_text->insert(value);
 
-    mainlayout->addWidget(opt_label);
     mainlayout->addWidget(value_text);
 
 
@@ -388,29 +393,82 @@ string BasicOptWidget::toStr()
 */
 void BasicOptWidget::OnCheck(int state)
 {
-    if ( state )
-    {
-        Unfold();
-    }
+    if ( state == 0 )
+        this->EasyViewWidget::SetFoldState(false);
     else
-    {
-        Fold();
-    }
+        this->EasyViewWidget::SetFoldState(true);
+
+    Fold();
 }
 
 
 /**
-* Inherited method used to switch the widget to his folded version
+* Inherited method used to switch the widget to his folded/unfolded version
 */
 void BasicOptWidget::Fold()
 {
-    value_text->show();
+    if ( GetFoldState() )
+    {
+        value_text->show();
+    }
+    else
+    {
+        value_text->hide();
+    }
 }
 
-/**
-* Inherited method used to switch the widget to his unfolded version
-*/
-void BasicOptWidget::Unfold()
+//--------------------------------------------------------------------------------------------------------------------
+
+QLabel      * opt_label;
+QComboBox   * combobox;
+
+ComboboxtWidget::ComboboxtWidget(QWidget* parent, QString opt, QString value)
+               : EasyViewWidget(parent, opt)
 {
-    value_text->hide();
+    list<string> l;
+    l.push_back("truc 1");
+    l.push_back("truc 2");
+    l.push_back("truc 3");
+    l.push_back("truc 4");
+    
+    InitWidget(l);
 }
+
+void ComboboxtWidget::InitWidget(list<string> l)
+{
+    combobox = new QComboBox(this);
+
+    list<string>::iterator it = l.begin();
+
+    for(; it != l.end(); it++)
+    {
+        combobox->addItem(QString((*it).c_str()));
+    }
+
+    mainlayout->addWidget(combobox);
+}
+
+void ComboboxtWidget::Fold()
+{
+    if ( GetFoldState() )
+    {
+        combobox->show();
+    }
+    else
+    {
+        combobox->hide();
+    }
+}
+
+string ComboboxtWidget::toStr()
+{
+
+}
+
+
+void ComboboxtWidget::OnCheck(int state)
+{
+
+}
+
+

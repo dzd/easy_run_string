@@ -7,7 +7,6 @@ using namespace std;
 #include <string>
 #include <list>
 
-
 // QT includes
 #include <QMainWindow>
 #include <QWidget>
@@ -25,6 +24,7 @@ using namespace std;
 #include <QToolButton>
 #include <QSpacerItem>
 #include <QCheckBox>
+#include <QComboBox>
 
 // easy_run_string includes
 #include "Data.hpp"
@@ -123,24 +123,30 @@ class EasyViewWidget : public QWidget
 {
     Q_OBJECT
 private:
+    bool isFolded;
     QSpacerItem * hspacer;
 
-    void InitWidget();
+    void InitWidget(QString opt);
 
 protected:
     QHBoxLayout   * mainlayout;
     QCheckBox     * maincheckbox;
+    QLabel        * opt_label;
 
     void MoveSpacerRight();
-    void Fold() {}
-    void Unfold() {}
+
+    void SetFoldState(bool b) { isFolded = b; }
+
+    virtual void Fold() {}
 
 public:
-    EasyViewWidget(QWidget* q);
+    EasyViewWidget(QWidget* q, QString opt, bool isFolded = false );
     virtual ~EasyViewWidget() {}
 
     virtual string toStr() = 0;
 
+    bool GetFoldState() { return isFolded; }
+    
 public slots:
     virtual void OnCheck(int state) {}
 };
@@ -150,14 +156,12 @@ class BasicOptWidget : public EasyViewWidget
 {
     Q_OBJECT
 private:
-    QLabel      * opt_label;
     QLineEdit   * value_text;
 
-    void InitWidget(QString optname, QString description);
+    void InitWidget(QString description);
 
 protected:
-    void Fold();
-    void Unfold();
+    virtual void Fold();
 
 public:
     BasicOptWidget(QWidget* parent, QString opt, QString value);
@@ -166,10 +170,28 @@ public:
 
 public slots:
     virtual void OnCheck(int state);
-
-//     QString getTitle() { return groupbox->title(); }
-//     QString getText() { return textedit->toPlainText(); }
-
 };
+
+/*---------------------------------------------------------------------*/
+class ComboboxtWidget : public EasyViewWidget
+{
+    Q_OBJECT
+private:
+    QComboBox   * combobox;
+
+    void InitWidget(list<string> list);
+
+protected:
+    virtual void Fold();
+
+public:
+    ComboboxtWidget(QWidget* parent, QString opt, QString value);
+
+    virtual string toStr();
+
+public slots:
+    virtual void OnCheck(int state);
+};
+
 
 #endif // __ERS_VIEW_
